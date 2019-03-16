@@ -1,16 +1,15 @@
 const outputs = [];
 const predictionPoint = 300;
-const k = 10;
 
 function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
   outputs.push([dropPosition, bounciness, size, bucketLabel]);
 }
 
 function runAnalysis() {
-  const testSetSize = 10;
+  const testSetSize = 100;
   const [testSet, trainingSet] = splitDataset(outputs, testSetSize);
 
-  let numberCorrect = 0;
+  // let numberCorrect = 0;
 
   // for (let i = 0; i < testSet.length; i++) {
   //   const bucket = knn(trainingSet, testSet[i][0]);
@@ -20,20 +19,21 @@ function runAnalysis() {
   // }
 
   // console.log(`Percentage correct: ${numberCorrect / testSetSize}`);
+  _.range(1, 30).forEach(k => {
+    const accuracy = _.chain(testSet)
+      .filter(
+        testObservation =>
+          knn(trainingSet, testObservation[0], k) === testObservation[3]
+      )
+      .size()
+      .divide(testSetSize)
+      .value();
 
-  const accuracy = _.chain(testSet)
-    .filter(
-      testObservation =>
-        knn(trainingSet, testObservation[0]) === testObservation[3]
-    )
-    .size()
-    .divide(testSetSize)
-    .value();
-
-  console.log(`Accuracy is ${accuracy}`);
+    console.log(`Accuracy for k of ${k} is ${accuracy}`);
+  });
 }
 
-function knn(data, point) {
+function knn(data, point, k) {
   return _.chain(data)
     .map(row => [distance(row[0], point), row[3]])
     .sortBy(row => row[0])

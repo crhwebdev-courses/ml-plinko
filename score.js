@@ -23,7 +23,8 @@ function runAnalysis() {
     const accuracy = _.chain(testSet)
       .filter(
         testObservation =>
-          knn(trainingSet, testObservation[0], k) === testObservation[3]
+          // call _.initial on testObservation to return everything except last element (i.e. label)
+          knn(trainingSet, _.initial(testObservation), k) === testObservation[3]
       )
       .size()
       .divide(testSetSize)
@@ -35,7 +36,10 @@ function runAnalysis() {
 
 function knn(data, point, k) {
   return _.chain(data)
-    .map(row => [distance(row[0], point), row[3]])
+    .map(row => {
+      //Note: _.initial returns a new array with all elements except the last
+      return [distance(_.initial(row), point), _.last(row)];
+    })
     .sortBy(row => row[0])
     .slice(0, k)
     .countBy(row => row[1])

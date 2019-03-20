@@ -47,8 +47,22 @@ function knn(data, point, k) {
     .value();
 }
 
-function distance(pointA, pointB) {
-  return Math.abs(pointA - pointB);
+// for finding distance for a single feature and prediction point
+// function distanceSingle(pointA, pointB) {
+//   return Math.abs(pointA - pointB);
+// }
+
+// For finding distance beteween more than one feature and prediction point
+// use pythagorean theorem to determine distance
+// h = (aDiff ** 2 + bDiff ** 2 + cDiff ** 2) ** 0.5  (i.e. square root)
+function distance(featuresA, featuresB) {
+  return (
+    _.chain(featuresA)
+      .zip(featuresB)
+      .map(([a, b]) => (a - b) ** 2)
+      .sum()
+      .value() ** 0.5
+  );
 }
 
 function splitDataset(data, testCount) {

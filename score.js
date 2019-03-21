@@ -7,31 +7,24 @@ function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
 
 function runAnalysis() {
   const testSetSize = 100;
+  const k = 10;
 
-  const [testSet, trainingSet] = splitDataset(minMax(outputs, 3), testSetSize);
+  _.range(0, 3).forEach(feature => {
+    const data = _.map(outputs, row => [row[feature], _.last(row)]);
 
-  // let numberCorrect = 0;
-
-  // for (let i = 0; i < testSet.length; i++) {
-  //   const bucket = knn(trainingSet, testSet[i][0]);
-  //   if (bucket === testSet[i][3]) {
-  //     numberCorrect++;
-  //   }
-  // }
-
-  // console.log(`Percentage correct: ${numberCorrect / testSetSize}`);
-  _.range(1, 30).forEach(k => {
+    const [testSet, trainingSet] = splitDataset(minMax(data, 1), testSetSize);
     const accuracy = _.chain(testSet)
       .filter(
         testObservation =>
           // call _.initial on testObservation to return everything except last element (i.e. label)
-          knn(trainingSet, _.initial(testObservation), k) === testObservation[3]
+          knn(trainingSet, _.initial(testObservation), k) ===
+          _.last(testObservation)
       )
       .size()
       .divide(testSetSize)
       .value();
 
-    console.log(`Accuracy for k of ${k} is ${accuracy}`);
+    console.log(`For feature of ${feature} is ${accuracy}`);
   });
 }
 

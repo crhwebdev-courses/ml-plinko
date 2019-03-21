@@ -7,7 +7,8 @@ function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
 
 function runAnalysis() {
   const testSetSize = 100;
-  const [testSet, trainingSet] = splitDataset(outputs, testSetSize);
+
+  const [testSet, trainingSet] = splitDataset(minMax(outputs, 3), testSetSize);
 
   // let numberCorrect = 0;
 
